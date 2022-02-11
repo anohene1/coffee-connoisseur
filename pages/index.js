@@ -2,6 +2,8 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import Banner from "../components/Banner";
+import Card from "../components/Card";
+import coffeeStores from "../data/coffee-stores.json";
 
 export default function Home() {
   function handleOnBannerBtnClick() {
@@ -23,6 +25,17 @@ export default function Home() {
         />
         <div className={styles.heroImage}>
           <Image src="/static/hero-image.png" width={700} height={400} />
+        </div>
+        <div className={styles.cardLayout}>
+          {coffeeStores.map((coffeeStore) => (
+            <Card
+              key={coffeeStore.id}
+              name={coffeeStore.name}
+              imageUrl={coffeeStore.imgUrl}
+              href={`/coffee-store/${coffeeStore.id}`}
+              className={styles.card}
+            />
+          ))}
         </div>
       </main>
     </div>
