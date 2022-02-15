@@ -35,7 +35,8 @@ export default function CoffeeStore(props) {
   if (router.isFallback) return <div>Loading...</div>;
 
   const { name, imgUrl } = props.coffeeStore;
-  const { formatted_address, neighbourhood } = props.coffeeStore.location;
+  const { formatted_address, neighborhood, cross_street } =
+    props.coffeeStore.location;
 
   function handleUpvoteButton() {
     console.log("hello upvote");
@@ -74,10 +75,12 @@ export default function CoffeeStore(props) {
             <Image src="/static/icons/places.svg" height={24} width={24} />
             <p className={styles.text}>{formatted_address}</p>
           </div>
-          {neighbourhood && (
+          {cross_street && (
             <div className={styles.iconWrapper}>
               <Image src="/static/icons/nearMe.svg" height={24} width={24} />
-              <p className={styles.text}>{neighbourhood}</p>
+              <p className={styles.text}>
+                {neighborhood ? neighborhood[0] : cross_street}
+              </p>
             </div>
           )}
           <div className={styles.iconWrapper}>
