@@ -3,12 +3,26 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import Banner from "../components/Banner";
 import Card from "../components/Card";
-import coffeeStoresData from "../data/coffee-stores.json";
+// import coffeeStoresData from "../data/coffee-stores.json";
 
 export async function getStaticProps(context) {
+  let coffeeStoreData = [];
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: process.env.FOURSQUARE_AUTHORIZATION,
+    },
+  };
+  const response = await fetch(
+    "https://api.foursquare.com/v3/places/nearby?ll=43.652,-79.395&query=coffee&limit=7",
+    options
+  );
+  const data = await response.json();
+
   return {
     props: {
-      coffeeStores: coffeeStoresData,
+      coffeeStores: data.results,
     },
   };
 }
@@ -40,10 +54,13 @@ export default function Home(props) {
             <div className={styles.cardLayout}>
               {props.coffeeStores.map((coffeeStore) => (
                 <Card
-                  key={coffeeStore.id}
+                  key={coffeeStore.fsq_id}
                   name={coffeeStore.name}
-                  imageUrl={coffeeStore.imgUrl}
-                  href={`/coffee-store/${coffeeStore.id}`}
+                  imageUrl={
+                    coffeeStore.imgUrl ||
+                    "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"
+                  }
+                  href={`/coffee-store/${coffeeStore.fsq_id}`}
                   className={styles.card}
                 />
               ))}
