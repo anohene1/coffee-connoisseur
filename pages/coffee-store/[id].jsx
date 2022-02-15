@@ -51,7 +51,7 @@ export default function CoffeeStore(props) {
         <div className={styles.col1}>
           <div className={styles.backToHomeLink}>
             <Link href="/">
-              <a>Go Back to home</a>
+              <a>← Go Back to home</a>
             </Link>
           </div>
           <div className={styles.nameWrapper}>
