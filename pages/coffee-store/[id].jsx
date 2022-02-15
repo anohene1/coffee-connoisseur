@@ -1,23 +1,26 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import coffeeStoresData from "../../data/coffee-stores.json";
 import Head from "next/head";
 import styles from "../../styles/Coffee-Store.module.css";
 import Image from "next/image";
+import { fetchCoffeeStores } from "../../lib/coffee-stores";
 
 export async function getStaticProps({ params }) {
+  const coffeeStores = await fetchCoffeeStores();
   return {
     props: {
-      coffeeStore: coffeeStoresData.find(
-        (store) => store.id.toString() === params.id
+      coffeeStore: coffeeStores.find(
+        (store) => store.fsq_id.toString() === params.id
       ),
     },
   };
 }
 
 export async function getStaticPaths() {
-  const paths = coffeeStoresData.map((coffeeStore) => ({
-    params: { id: coffeeStore.id.toString() },
+  const coffeeStores = await fetchCoffeeStores();
+
+  const paths = coffeeStores.map((coffeeStore) => ({
+    params: { id: coffeeStore.fsq_id.toString() },
   }));
 
   return {
@@ -31,7 +34,8 @@ export default function CoffeeStore(props) {
 
   if (router.isFallback) return <div>Loading...</div>;
 
-  const { address, name, neighbourhood, imgUrl } = props.coffeeStore;
+  const { name, imgUrl } = props.coffeeStore;
+  const { formatted_address, neighbourhood } = props.coffeeStore.location;
 
   function handleUpvoteButton() {
     console.log("hello upvote");
@@ -54,7 +58,10 @@ export default function CoffeeStore(props) {
           </div>
           <div className={styles.storeImgWrapper}>
             <Image
-              src={imgUrl}
+              src={
+                imgUrl ||
+                "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"
+              }
               width={600}
               height={360}
               className={styles.storeImg}
@@ -65,12 +72,14 @@ export default function CoffeeStore(props) {
         <div className={`${styles.col2} glass`}>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/places.svg" height={24} width={24} />
-            <p className={styles.text}>{address}</p>
+            <p className={styles.text}>{formatted_address}</p>
           </div>
-          <div className={styles.iconWrapper}>
-            <Image src="/static/icons/nearMe.svg" height={24} width={24} />
-            <p className={styles.text}>{neighbourhood}</p>
-          </div>
+          {neighbourhood && (
+            <div className={styles.iconWrapper}>
+              <Image src="/static/icons/nearMe.svg" height={24} width={24} />
+              <p className={styles.text}>{neighbourhood}</p>
+            </div>
+          )}
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/star.svg" height={24} width={24} />
             <p className={styles.text}>1</p>
