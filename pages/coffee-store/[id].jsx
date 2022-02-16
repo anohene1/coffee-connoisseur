@@ -5,8 +5,8 @@ import styles from "../../styles/Coffee-Store.module.css";
 import Image from "next/image";
 import { fetchCoffeeStores } from "../../lib/coffee-stores";
 import { useContext, useEffect, useState } from "react";
-import { isEmpty } from "../../utils";
 import { StoreContext } from "../../store/store-context";
+import { isEmpty } from "../../utils";
 
 export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
@@ -39,12 +39,12 @@ export default function CoffeeStore(initialProps) {
   if (router.isFallback) return <div>Loading...</div>;
 
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
-
-  const { name, imgUrl, location } = coffeeStore;
   const id = router.query.id;
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
+
+  const { name, imgUrl, location } = coffeeStore;
 
   useEffect(
     function () {
