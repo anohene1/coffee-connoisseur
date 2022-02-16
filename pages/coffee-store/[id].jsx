@@ -5,8 +5,8 @@ import styles from "../../styles/Coffee-Store.module.css";
 import Image from "next/image";
 import { fetchCoffeeStores } from "../../lib/coffee-stores";
 import { useContext, useEffect, useState } from "react";
-import { StoreContext } from "../_app";
 import { isEmpty } from "../../utils";
+import { StoreContext } from "../../store/store-context";
 
 export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
