@@ -4,14 +4,18 @@ import Head from "next/head";
 import styles from "../../styles/Coffee-Store.module.css";
 import Image from "next/image";
 import { fetchCoffeeStores } from "../../lib/coffee-stores";
+import { useContext, useEffect, useState } from "react";
+import { StoreContext } from "../_app";
+import { isEmpty } from "../../utils";
 
 export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
+  const findCoffeeStoreById = coffeeStores.find(
+    (store) => store.fsq_id.toString() === params.id
+  );
   return {
     props: {
-      coffeeStore: coffeeStores.find(
-        (store) => store.fsq_id.toString() === params.id
-      ),
+      coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
     },
   };
 }
@@ -29,14 +33,32 @@ export async function getStaticPaths() {
   };
 }
 
-export default function CoffeeStore(props) {
+export default function CoffeeStore(initialProps) {
   const router = useRouter();
 
   if (router.isFallback) return <div>Loading...</div>;
 
-  const { name, imgUrl } = props.coffeeStore;
-  const { formatted_address, neighborhood, cross_street } =
-    props.coffeeStore.location;
+  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+
+  const { name, imgUrl, location } = coffeeStore;
+  const id = router.query.id;
+  const {
+    state: { coffeeStores },
+  } = useContext(StoreContext);
+
+  useEffect(
+    function () {
+      if (isEmpty(initialProps.coffeeStore)) {
+        if (coffeeStores.length > 0) {
+          const findCoffeeStoreById = coffeeStores.find(
+            (store) => store.fsq_id.toString() === params.id
+          );
+          setCoffeeStore(findCoffeeStoreById);
+        }
+      }
+    },
+    [id]
+  );
 
   function handleUpvoteButton() {
     console.log("hello upvote");
@@ -73,13 +95,15 @@ export default function CoffeeStore(props) {
         <div className={`${styles.col2} glass`}>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/places.svg" height={24} width={24} />
-            <p className={styles.text}>{formatted_address}</p>
+            <p className={styles.text}>{location.formatted_address}</p>
           </div>
-          {cross_street && (
+          {location.cross_street && (
             <div className={styles.iconWrapper}>
               <Image src="/static/icons/nearMe.svg" height={24} width={24} />
               <p className={styles.text}>
-                {neighborhood ? neighborhood[0] : cross_street}
+                {location.neighborhood
+                  ? location.neighborhood[0]
+                  : location.cross_street}
               </p>
             </div>
           )}

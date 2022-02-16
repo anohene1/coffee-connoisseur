@@ -5,7 +5,8 @@ import Banner from "../components/Banner";
 import Card from "../components/Card";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
 import useTrackLocation from "../hooks/use-track-location";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ACTION_TYPES, StoreContext } from "./_app";
 
 export async function getStaticProps(context) {
   const coffeeStores = await fetchCoffeeStores();
@@ -18,9 +19,10 @@ export async function getStaticProps(context) {
 }
 
 export default function Home(props) {
-  const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } =
+  const { handleTrackLocation, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
-  const [coffeeStores, setCoffeeStores] = useState([]);
+  // const [coffeeStores, setCoffeeStores] = useState([]);
+  const [coffeeStoreError, setCoffeeStoreError] = useState(null);
 
   function handleOnBannerBtnClick() {
     console.log("clicked");
@@ -28,15 +30,23 @@ export default function Home(props) {
     console.log({ latLong, locationErrorMsg });
   }
 
+  const { dispatch, state } = useContext(StoreContext);
+  const { coffeeStores, latLong } = state;
+
   useEffect(
     async function () {
       if (latLong) {
         try {
           const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 15);
           console.log({ fetchedCoffeeStores });
-          setCoffeeStores(fetchedCoffeeStores);
-        } catch (e) {
-          console.log(e);
+          // setCoffeeStores(fetchedCoffeeStores);
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: { coffeeStores: fetchedCoffeeStores },
+          });
+        } catch (error) {
+          console.log(error);
+          setCoffeeStoreError(error.message);
         }
       }
     },
@@ -56,7 +66,8 @@ export default function Home(props) {
           buttonText={isFindingLocation ? "Loading..." : "View stores nearby"}
           handleOnClick={handleOnBannerBtnClick}
         />
-        {locationErrorMsg && `Something went wrong: ${locationErrorMsg}`}
+        {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
+        {coffeeStoreError && <p>Something went wrong: {coffeeStoreError}</p>}
         <div className={styles.heroImage}>
           <Image src="/static/hero-image.png" width={700} height={400} />
         </div>
