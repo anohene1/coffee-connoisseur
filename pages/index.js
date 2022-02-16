@@ -4,6 +4,7 @@ import styles from "../styles/Home.module.css";
 import Banner from "../components/Banner";
 import Card from "../components/Card";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
+import useTrackLocation from "../hooks/use-track-location";
 
 export async function getStaticProps(context) {
   const coffeeStores = await fetchCoffeeStores();
@@ -16,8 +17,13 @@ export async function getStaticProps(context) {
 }
 
 export default function Home(props) {
+  const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } =
+    useTrackLocation();
+
   function handleOnBannerBtnClick() {
     console.log("clicked");
+    handleTrackLocation();
+    console.log({ latLong, locationErrorMsg });
   }
 
   return (
@@ -30,7 +36,7 @@ export default function Home(props) {
 
       <main className={styles.main}>
         <Banner
-          buttonText="View stores nearby"
+          buttonText={isFindingLocation ? "Loading..." : "View stores nearby"}
           handleOnClick={handleOnBannerBtnClick}
         />
         <div className={styles.heroImage}>
