@@ -44,9 +44,6 @@ export default function CoffeeStore(initialProps) {
     state: { coffeeStores },
   } = useContext(StoreContext);
 
-  console.log(coffeeStore);
-  console.log(coffeeStores);
-
   useEffect(
     function () {
       if (coffeeStore.location === "") {
