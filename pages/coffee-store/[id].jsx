@@ -15,7 +15,7 @@ export async function getStaticProps({ params }) {
   );
   return {
     props: {
-      coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
+      coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : { location: "" },
     },
   };
 }
@@ -38,20 +38,21 @@ export default function CoffeeStore(initialProps) {
 
   if (router.isFallback) return <div>Loading...</div>;
 
-  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
   const id = router.query.id;
+  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
 
-  const { name, imgUrl, location } = coffeeStore;
+  console.log(coffeeStore);
+  console.log(coffeeStores);
 
   useEffect(
     function () {
-      if (isEmpty(initialProps.coffeeStore)) {
+      if (coffeeStore.location === "") {
         if (coffeeStores.length > 0) {
           const findCoffeeStoreById = coffeeStores.find(
-            (store) => store.fsq_id.toString() === params.id
+            (store) => store.fsq_id.toString() === id
           );
           setCoffeeStore(findCoffeeStoreById);
         }
@@ -59,6 +60,8 @@ export default function CoffeeStore(initialProps) {
     },
     [id]
   );
+
+  const { name, imgUrl, location } = coffeeStore;
 
   function handleUpvoteButton() {
     console.log("hello upvote");
@@ -97,7 +100,7 @@ export default function CoffeeStore(initialProps) {
             <Image src="/static/icons/places.svg" height={24} width={24} />
             <p className={styles.text}>{location.formatted_address}</p>
           </div>
-          {location.cross_street && (
+          {location.neighborhood && (
             <div className={styles.iconWrapper}>
               <Image src="/static/icons/nearMe.svg" height={24} width={24} />
               <p className={styles.text}>

@@ -7,6 +7,7 @@ import { fetchCoffeeStores } from "../lib/coffee-stores";
 import useTrackLocation from "../hooks/use-track-location";
 import { useContext, useEffect, useState } from "react";
 import { ACTION_TYPES, StoreContext } from "../store/store-context";
+import { isEmpty } from "../utils";
 
 export async function getStaticProps(context) {
   const coffeeStores = await fetchCoffeeStores();
