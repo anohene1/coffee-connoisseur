@@ -44,14 +44,47 @@ export default function CoffeeStore(initialProps) {
     state: { coffeeStores },
   } = useContext(StoreContext);
 
+  async function handleCreateCoffeeStore(coffeeStore) {
+    try {
+      const { fsq_id, name, imgUrl, voting } = coffeeStore;
+      const { address: formatted_address, neighbourhood } =
+        coffeeStore.location;
+
+      const response = await fetch("/api/createCoffeeStore", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fsq_id: fsq_id,
+          name,
+          formatted_address: formatted_address || "",
+          neighbourhood: neighbourhood || "",
+          imgUrl,
+          voting,
+        }),
+      });
+
+      const dbCoffeeStore = await response.json();
+      console.log(dbCoffeeStore);
+    } catch (error) {
+      console.error("Error creating coffee store", error);
+    }
+  }
+
   useEffect(
     function () {
       if (coffeeStore.location === "") {
         if (coffeeStores.length > 0) {
-          const findCoffeeStoreById = coffeeStores.find(
+          const coffeeStoreFromContext = coffeeStores.find(
             (store) => store.fsq_id.toString() === id
           );
-          setCoffeeStore(findCoffeeStoreById);
+
+          if (coffeeStoreFromContext) {
+            setCoffeeStore(coffeeStoreFromContext);
+            console.log(coffeeStoreFromContext);
+            handleCreateCoffeeStore(coffeeStoreFromContext);
+          }
         }
       }
     },
