@@ -2,7 +2,7 @@ import { table, getMinifiedRecords } from "../../lib/airtable";
 
 export default async function createCoffeeStore(req, res) {
   if (req.method === "POST") {
-    const { fsq_id, name, formatted_address, neighbourhood, imgUrl, voting } =
+    const { fsq_id, name, formatted_address, neighborhood, imgUrl, voting } =
       req.body;
 
     try {
@@ -24,7 +24,7 @@ export default async function createCoffeeStore(req, res) {
                   fsq_id,
                   name,
                   formatted_address,
-                  neighbourhood,
+                  neighborhood,
                   imgUrl,
                   voting,
                 },

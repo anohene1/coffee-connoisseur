@@ -47,8 +47,7 @@ export default function CoffeeStore(initialProps) {
   async function handleCreateCoffeeStore(coffeeStore) {
     try {
       const { fsq_id, name, imgUrl, voting } = coffeeStore;
-      const { address: formatted_address, neighbourhood } =
-        coffeeStore.location;
+      const { address: formatted_address, neighborhood } = coffeeStore.location;
 
       const response = await fetch("/api/createCoffeeStore", {
         method: "POST",
@@ -59,7 +58,7 @@ export default function CoffeeStore(initialProps) {
           fsq_id: fsq_id,
           name,
           formatted_address: formatted_address || "",
-          neighbourhood: neighbourhood || "",
+          neighborhood: neighborhood[0] || "",
           imgUrl,
           voting,
         }),
