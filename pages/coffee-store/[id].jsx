@@ -60,7 +60,7 @@ export default function CoffeeStore(initialProps) {
           formatted_address: formatted_address || "",
           neighborhood: neighborhood[0] || "",
           imgUrl,
-          voting,
+          voting: 0,
         }),
       });
 
