@@ -104,7 +104,7 @@ export default function CoffeeStore(initialProps) {
   useEffect(
     function () {
       console.log(data);
-      if (data) {
+      if (data && data.length > 0) {
         console.log("data from swr", data);
         setCoffeeStore(data[0]);
         setVotingCount(data[0].voting);
@@ -113,9 +113,25 @@ export default function CoffeeStore(initialProps) {
     [data]
   );
 
-  function handleUpvoteButton() {
-    console.log("hello upvote");
-    setVotingCount((count) => count + 1);
+  async function handleUpvoteButton() {
+    try {
+      const response = await fetch("/api/favoriteCoffeeStoreById", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fsq_id: id,
+        }),
+      });
+
+      const dbCoffeeStore = await response.json();
+      if (dbCoffeeStore && dbCoffeeStore.length > 0) {
+        setVotingCount((count) => count + 1);
+      }
+    } catch (error) {
+      console.error("Error upvoting coffee store: ", error);
+    }
   }
 
   if (error) {
