@@ -7,6 +7,7 @@ import { fetchCoffeeStores } from "../../lib/coffee-stores";
 import { useContext, useEffect, useState } from "react";
 import { StoreContext } from "../../store/store-context";
 import { isEmpty } from "../../utils";
+import useSWR from "swr";
 
 export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
@@ -58,16 +59,16 @@ export default function CoffeeStore(initialProps) {
           fsq_id: fsq_id,
           name,
           formatted_address: formatted_address || "",
-          neighborhood: neighborhood[0] || "",
+          neighborhood: neighborhood ? neighborhood[0] : "",
           imgUrl,
           voting: 0,
         }),
       });
 
       const dbCoffeeStore = await response.json();
-      console.log(dbCoffeeStore);
+      // console.log(dbCoffeeStore);
     } catch (error) {
-      console.error("Error creating coffee store", error);
+      console.error("Error creating coffee store: ", error);
     }
   }
 
@@ -81,7 +82,7 @@ export default function CoffeeStore(initialProps) {
 
           if (coffeeStoreFromContext) {
             setCoffeeStore(coffeeStoreFromContext);
-            console.log(coffeeStoreFromContext);
+            // console.log(coffeeStoreFromContext);
             handleCreateCoffeeStore(coffeeStoreFromContext);
           }
         }
@@ -94,10 +95,25 @@ export default function CoffeeStore(initialProps) {
 
   const { name, imgUrl, location } = coffeeStore;
   const [votingCount, setVotingCount] = useState(1);
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?fsq_id=${id}`);
+
+  useEffect(
+    function () {
+      if (data) {
+        console.log("data from swr");
+        setCoffeeStore(data[0]);
+      }
+    },
+    [data]
+  );
 
   function handleUpvoteButton() {
     console.log("hello upvote");
     setVotingCount((count) => count + 1);
+  }
+
+  if (error) {
+    return <div>Something went wrong retrieving coffee store page</div>;
   }
 
   return (
