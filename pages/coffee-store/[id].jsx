@@ -66,7 +66,6 @@ export default function CoffeeStore(initialProps) {
       });
 
       const dbCoffeeStore = await response.json();
-      // console.log(dbCoffeeStore);
     } catch (error) {
       console.error("Error creating coffee store: ", error);
     }
@@ -82,7 +81,6 @@ export default function CoffeeStore(initialProps) {
 
           if (coffeeStoreFromContext) {
             setCoffeeStore(coffeeStoreFromContext);
-            // console.log(coffeeStoreFromContext);
             handleCreateCoffeeStore(coffeeStoreFromContext);
           }
         }
@@ -103,9 +101,7 @@ export default function CoffeeStore(initialProps) {
 
   useEffect(
     function () {
-      console.log(data);
       if (data && data.length > 0) {
-        console.log("data from swr", data);
         setCoffeeStore(data[0]);
         setVotingCount(data[0].voting);
       }

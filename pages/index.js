@@ -26,9 +26,7 @@ export default function Home(props) {
   const [coffeeStoreError, setCoffeeStoreError] = useState(null);
 
   function handleOnBannerBtnClick() {
-    console.log("clicked");
     handleTrackLocation();
-    console.log({ latLong, locationErrorMsg });
   }
 
   const { dispatch, state } = useContext(StoreContext);
@@ -48,7 +46,7 @@ export default function Home(props) {
             payload: { coffeeStores },
           });
         } catch (error) {
-          console.log(error);
+          console.error(error);
           setCoffeeStoreError(error.message);
         }
       }

@@ -41,7 +41,6 @@ export default async function createCoffeeStore(req, res) {
         res.json({ message: "id is missing" });
       }
     } catch (error) {
-      console.log("Error creating or finding store", error);
       res.status(500);
       res.json({ message: "Error creating or finding store", error });
     }
