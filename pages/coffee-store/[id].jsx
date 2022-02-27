@@ -95,7 +95,7 @@ export default function CoffeeStore(initialProps) {
 
   const { name, imgUrl, location, formatted_address, neighborhood } =
     coffeeStore;
-  const [votingCount, setVotingCount] = useState(1);
+  const [votingCount, setVotingCount] = useState(0);
   const { data, error } = useSWR(
     `/api/getCoffeeStoreById?fsq_id=${id}`,
     (url) => fetch(url).then((res) => res.json())
