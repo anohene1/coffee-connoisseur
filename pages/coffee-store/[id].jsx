@@ -93,15 +93,21 @@ export default function CoffeeStore(initialProps) {
     [id, initialProps, initialProps.coffeeStore]
   );
 
-  const { name, imgUrl, location } = coffeeStore;
+  const { name, imgUrl, location, formatted_address, neighborhood } =
+    coffeeStore;
   const [votingCount, setVotingCount] = useState(1);
-  const { data, error } = useSWR(`/api/getCoffeeStoreById?fsq_id=${id}`);
+  const { data, error } = useSWR(
+    `/api/getCoffeeStoreById?fsq_id=${id}`,
+    (url) => fetch(url).then((res) => res.json())
+  );
 
   useEffect(
     function () {
+      console.log(data);
       if (data) {
-        console.log("data from swr");
+        console.log("data from swr", data);
         setCoffeeStore(data[0]);
+        setVotingCount(data[0].voting);
       }
     },
     [data]
@@ -147,18 +153,32 @@ export default function CoffeeStore(initialProps) {
         <div className={`${styles.col2} glass`}>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/places.svg" height={24} width={24} />
-            <p className={styles.text}>{location.formatted_address}</p>
+            <p className={styles.text}>
+              {location ? location.formatted_address : formatted_address}
+            </p>
           </div>
-          {location.neighborhood && (
-            <div className={styles.iconWrapper}>
-              <Image src="/static/icons/nearMe.svg" height={24} width={24} />
-              <p className={styles.text}>
-                {location.neighborhood
-                  ? location.neighborhood[0]
-                  : location.cross_street}
-              </p>
-            </div>
-          )}
+          {location
+            ? location.neighborhood
+            : neighborhood && (
+                <div className={styles.iconWrapper}>
+                  <Image
+                    src="/static/icons/nearMe.svg"
+                    height={24}
+                    width={24}
+                  />
+                  {location && (
+                    <p className={styles.text}>
+                      {location.neighborhood
+                        ? location.neighborhood[0]
+                        : location.cross_street}
+                    </p>
+                  )}
+
+                  {neighborhood && (
+                    <p className={styles.text}>{neighborhood}</p>
+                  )}
+                </div>
+              )}
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/star.svg" height={24} width={24} />
             <p className={styles.text}>{votingCount}</p>
